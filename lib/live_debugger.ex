@@ -81,16 +81,20 @@ defmodule LiveDebugger do
 
   defp put_endpoint_config(config) do
     endpoint_config =
-      [
-        http: [
-          ip: Keyword.get(config, :ip, @default_ip),
-          port: Keyword.get(config, :port, @default_port)
-        ],
-        secret_key_base: Keyword.get(config, :secret_key_base, @default_secret_key_base),
-        live_view: [signing_salt: Keyword.get(config, :signing_salt, @default_signing_salt)],
-        adapter: Keyword.get(config, :adapter, default_adapter()),
-        live_reload: Keyword.get(config, :live_reload, [])
-      ]
+      if not Keyword.has_key?(config, LiveDebuggerWeb.Endpoint) do
+        [
+          http: [
+            ip: Keyword.get(config, :ip, @default_ip),
+            port: Keyword.get(config, :port, @default_port)
+          ],
+          secret_key_base: Keyword.get(config, :secret_key_base, @default_secret_key_base),
+          live_view: [signing_salt: Keyword.get(config, :signing_salt, @default_signing_salt)],
+          adapter: Keyword.get(config, :adapter, default_adapter()),
+          live_reload: Keyword.get(config, :live_reload, [])
+        ]
+      else
+        Keyword.get(config, LiveDebuggerWeb.Endpoint)
+      end
 
     endpoint_server = Keyword.get(config, :server)
 
